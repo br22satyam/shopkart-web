@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopKart - Online E-Commerce Store</title>
+    <base href="../">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="site-intro" aria-hidden="true">
+        <div class="site-intro-brand">
+            <span class="site-intro-icon"><i class="fa-solid fa-bag-shopping"></i></span>
+            <span class="site-intro-name">Shop<span>Kart</span></span>
+            <span class="site-intro-tagline">Shopping made simple</span>
+            <span class="site-intro-progress"></span>
+        </div>
+    </div>
+    <!-- Navbar -->
+    <header class="navbar" id="top">
+        <a class="logo" href="HTML/index.html" aria-label="ShopKart home">
+            <i class="fa-solid fa-bag-shopping"></i> Shop<span>Kart</span>
+        </a>
+        <div class="search-bar">
+            <input type="search" id="searchInput" placeholder="Search for products, brands and more..." aria-label="Search products">
+            <button id="searchButton" type="button" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div class="nav-links">
+            <button id="wishlistBtn" class="nav-btn" type="button"><i class="fa-regular fa-heart"></i> Wishlist</button>
+            <button id="signInBtn" class="nav-btn" type="button"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button>
+            <button id="signOutBtn" class="nav-btn" type="button" hidden><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
+            <button id="ordersBtn" class="nav-btn" type="button" hidden><i class="fa-solid fa-box"></i> My orders</button>
+            <button id="adminBtn" class="nav-btn" type="button" hidden><i class="fa-solid fa-user-shield"></i> Admin Panel</button>
+            <button id="cartBtn" class="nav-btn" type="button" aria-controls="cartDrawer">
+                <i class="fa-solid fa-cart-shopping"></i> Cart 
+                <span id="cartCount" class="badge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Categories Banner -->
+    <nav class="categories-nav">
+        <button class="cat-btn active" data-category="All">All Products</button>
+        <button class="cat-btn" data-category="Electronics">Electronics</button>
+        <button class="cat-btn" data-category="Mobiles">Mobiles</button>
+        <button class="cat-btn" data-category="Laptops">Laptops</button>
+        <button class="cat-btn" data-category="Fashion">Fashion</button>
+        <button class="cat-btn" data-category="Shoes">Shoes</button>
+        <button class="cat-btn" data-category="Accessories">Accessories</button>
+        <button class="cat-btn" data-category="Home">Home & Kitchen</button>
+        <button class="cat-btn" data-category="Beauty">Beauty & Personal Care</button>
+        <button class="cat-btn" data-category="Daily Use">Daily Use</button>
+    </nav>
+    <div class="promo-strip"><i class="fa-solid fa-circle-info"></i> ShopKart demo · Firebase-backed orders · No real payments</div>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+        <div id="appNotice" class="app-notice" role="status" aria-live="polite" hidden></div>
+        <div id="paymentStatus" class="payment-status" role="status" aria-live="polite" hidden></div>
+        <section id="guestOrderTracker" class="guest-order-tracker" hidden aria-labelledby="guestOrderTrackerTitle">
+            <h2 id="guestOrderTrackerTitle">Track a guest order</h2>
+            <p>Keep the order ID and private tracking code shown after checkout. The code cannot be recovered if lost.</p>
+            <form id="guestOrderTrackerForm">
+                <label for="guestOrderId">Order ID</label>
+                <input id="guestOrderId" required autocomplete="off" placeholder="ORD_...">
+                <label for="guestTrackingCode">Private tracking code</label>
+                <input id="guestTrackingCode" required autocomplete="off" spellcheck="false">
+                <button type="submit" class="submit-order-btn">Check order status</button>
+            </form>
+            <p id="guestOrderStatus" role="status" aria-live="polite"></p>
+        </section>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <p class="hero-kicker">SHOP SMART. LIVE BETTER.</p>
+                <h1>Find something you’ll love</h1>
+                <p>Browse the ShopKart catalog and discover products across popular categories.</p>
+                <a class="hero-cta" href="HTML/index.html#productsSection">Explore the catalog <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        <section id="featuredSection" class="featured-section" aria-labelledby="featuredTitle">
+            <div class="section-heading">
+                <div>
+                    <p class="section-eyebrow">SHOPKART PICKS</p>
+                    <h2 id="featuredTitle">Featured products</h2>
+                </div>
+            </div>
+            <div id="featuredGrid" class="product-grid"></div>
+        </section>
+
+        <!-- Product Grid -->
+        <section id="productsSection" class="products-section">
+            <h2>Shop the catalog</h2>
+            <p id="catalogStatus" class="catalog-status" role="status" aria-live="polite">Loading products...</p>
+            <div class="catalog-controls">
+                <label for="priceFilter">Max price (₹)
+                    <input id="priceFilter" type="number" min="0" placeholder="Any price">
+                </label>
+                <label for="sortProducts">Sort by
+                    <select id="sortProducts">
+                        <option value="popular">Featured</option>
+                        <option value="price-low">Price: low to high</option>
+                        <option value="price-high">Price: high to low</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </label>
+            </div>
+            <div id="productGrid" class="product-grid" aria-live="polite">
+                <!-- Dynamic Products Rendered Here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Slide-out Drawer -->
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Your Shopping Cart</h3>
+            <button id="closeCart" class="close-btn">&times;</button>
+        </div>
+        <div id="cartItems" class="cart-items">
+            <!-- Cart Items -->
+        </div>
+        <div class="cart-footer">
+            <div class="total-bill">
+                <span>Subtotal:</span>
+                <span id="cartSubtotal">₹0</span>
+            </div>
+            <div class="total-bill cart-delivery">
+                <span>Delivery:</span>
+                <span id="cartDelivery">₹0</span>
+            </div>
+            <div class="total-bill">
+                <span>Total:</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <button id="checkoutBtn" class="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <button type="button" class="close-modal" aria-label="Close checkout">&times;</button>
+            <h2>Demo checkout</h2>
+            <p class="demo-checkout-note"><i class="fa-solid fa-circle-info"></i> This is a college-project demo. No payment is collected.</p>
+            <div id="checkoutSummary" class="checkout-summary" aria-live="polite"></div>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="custName">Full Name</label>
+                    <input type="text" id="custName" required minlength="2" maxlength="100" autocomplete="name" placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label for="custEmail">Email address</label>
+                    <input type="email" id="custEmail" required maxlength="254" autocomplete="email" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="custPhone">Contact phone number</label>
+                    <input type="tel" id="custPhone" required minlength="7" maxlength="16" pattern="[+]?[0-9]{7,15}" autocomplete="tel" placeholder="+91...">
+                </div>
+                <p class="checkout-auth-note">Demo orders are saved to Firebase. You will not be charged. Keep the private tracking code shown after placing a guest order.</p>
+                <div class="form-group">
+                    <label for="custAddress">Delivery Address</label>
+                    <textarea id="custAddress" required minlength="8" maxlength="500" autocomplete="street-address" placeholder="Enter complete address..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="custCity">City</label>
+                        <input type="text" id="custCity" required maxlength="100" autocomplete="address-level2">
+                    </div>
+                    <div class="form-group">
+                        <label for="custState">State</label>
+                        <input type="text" id="custState" required maxlength="100" autocomplete="address-level1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="custPincode">PIN code</label>
+                    <input type="text" id="custPincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autocomplete="postal-code">
+                </div>
+                <fieldset class="payment-options">
+                    <legend>Demo order</legend>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="Demo checkout" checked required>
+                        <span><i class="fa-solid fa-bag-shopping"></i> Place demo order (no payment)</span>
+                    </label>
+                </fieldset>
+                <p id="checkoutError" class="checkout-error" role="alert" hidden></p>
+                <button type="submit" class="submit-order-btn">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content admin-content">
+            <button type="button" class="close-admin" aria-label="Close admin dashboard">&times;</button>
+            <h2>Admin Dashboard (Manage Store)</h2>
+            <div id="adminStats" class="admin-stats" aria-live="polite">
+                <div class="stat-card"><span>Products</span><strong id="statProducts">0</strong></div>
+                <div class="stat-card"><span>Orders</span><strong id="statOrders">0</strong></div>
+                <div class="stat-card"><span>Pending</span><strong id="statPending">0</strong></div>
+                <div class="stat-card"><span>Delivered</span><strong id="statDelivered">0</strong></div>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-tab="addProductTab">Add Product</button>
+                <button class="admin-tab-btn" data-tab="manageProductsTab">Manage Products</button>
+                <button class="admin-tab-btn" data-tab="viewOrdersTab">View Orders</button>
+            </div>
+
+            <!-- Add Product Tab -->
+            <div id="addProductTab" class="admin-tab-content active">
+                <h3>Add New Product</h3>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="pTitle">Product Title</label>
+                        <input type="text" id="pTitle" required minlength="2" maxlength="200">
+                    </div>
+                    <div class="form-group">
+                        <label for="pCategory">Category</label>
+                        <select id="pCategory">
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mobiles">Mobiles</option>
+                            <option value="Laptops">Laptops</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Shoes">Shoes</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Home">Home & Kitchen</option>
+                            <option value="Beauty">Beauty</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pPrice">Price (₹)</label>
+                        <input type="number" id="pPrice" min="1" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pStock">Stock quantity</label>
+                        <input type="number" id="pStock" min="0" max="100000" step="1" value="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pImg">Image URL</label>
+                        <input type="text" id="pImg" inputmode="url" required placeholder="https://images.unsplash.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="pDesc">Description</label>
+                        <textarea id="pDesc" required minlength="5" maxlength="2000"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Save Product to Database</button>
+                    <button id="cancelProductEditBtn" type="button" class="auth-secondary-btn" hidden>Cancel edit</button>
+                </form>
+            </div>
+
+            <div id="manageProductsTab" class="admin-tab-content">
+                <h3>Manage Products</h3>
+                <div id="adminProducts" class="orders-list"></div>
+            </div>
+
+            <!-- View Orders Tab -->
+            <div id="viewOrdersTab" class="admin-tab-content">
+                <h3>Customer Orders Placed</h3>
+                <div id="ordersList" class="orders-list">
+                    <!-- Dynamic Orders -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="wishlistModal" class="modal" aria-hidden="true">
+        <div class="modal-content list-modal">
+            <button type="button" class="close-list close-wishlist" aria-label="Close wishlist">&times;</button>
+            <h2>My Wishlist</h2>
+            <div id="wishlistItems" class="product-grid"></div>
+        </div>
+    </div>
+    <div id="ordersModal" class="modal" aria-hidden="true">
+        <div class="modal-content list-modal">
+            <button type="button" class="close-list close-orders" aria-label="Close orders">&times;</button>
+            <h2>My Orders</h2>
+            <div id="customerOrders" class="orders-list"></div>
+        </div>
+    </div>
+    <div id="authModal" class="modal" aria-hidden="true">
+        <div class="modal-content auth-modal-content">
+            <button type="button" id="closeAuthModal" class="close-list" aria-label="Close sign-in">&times;</button>
+            <section id="loginPanel" aria-labelledby="loginTitle">
+                <h2 id="loginTitle">Sign in to ShopKart</h2>
+                <p class="auth-description">Use your existing email and password.</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email address</label>
+                        <input id="loginEmail" type="email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input id="loginPassword" type="password" required autocomplete="current-password">
+                    </div>
+                    <button id="loginSubmitBtn" class="submit-order-btn" type="submit">Sign in</button>
+                </form>
+                <button id="forgotPasswordBtn" class="auth-link" type="button">Forgot Password?</button>
+                <p id="loginMessage" class="auth-message" role="status" aria-live="polite"></p>
+            </section>
+            <section id="passwordResetPanel" aria-labelledby="passwordResetTitle" hidden>
+                <h2 id="passwordResetTitle">Reset your password</h2>
+                <p class="auth-description">Enter the email address associated with your ShopKart account.</p>
+                <form id="passwordResetForm">
+                    <div class="form-group">
+                        <label for="resetEmail">Email address</label>
+                        <input id="resetEmail" type="email" required autocomplete="email">
+                    </div>
+                    <button id="passwordResetSubmitBtn" class="submit-order-btn" type="submit">Send reset link</button>
+                </form>
+                <button id="backToLoginBtn" class="auth-link" type="button">Back to sign in</button>
+                <p id="passwordResetMessage" class="auth-message" role="status" aria-live="polite"></p>
+            </section>
+        </div>
+    </div>
+    <!-- Product Detail Modal -->
+<div id="productModal" class="modal" aria-hidden="true">
+    <div class="modal-content product-modal-content">
+        <button type="button" class="close-product" aria-label="Close product details">&times;</button>
+        <div id="modalProductDetails">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+</div>
+    <footer>
+        <p>ShopKart · College-project demo storefront.</p>
+        <p>Demo orders are stored in Firebase; no real payments are processed.</p>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-functions-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
