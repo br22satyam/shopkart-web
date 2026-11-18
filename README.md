@@ -1,6 +1,6 @@
 # ShopKart – E-Commerce Store
 **BCA Cyber Security | Team Leader:** Satyam Kumar Soni  
-**Team Members:**satyam
+**Team Members:**satyam and  Deevanshu
 
 ## Project Overview
 ShopKart is a responsive e-commerce demo built with HTML, CSS, vanilla JavaScript, Firebase Authentication, Cloud Functions, and Cloud Firestore. The existing ShopKart catalog and visual branding are retained. The demo checkout does not collect money or connect to a payment provider.
